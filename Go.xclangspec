@@ -37,17 +37,17 @@
                 "switch",
                 "type",
                 "var",
-                
+
                 // types
                 "bool",
-                
+
                 "byte",
-                
+
                 "float32",
                 "float64",
                 "complex64",
                 "complex128",
-                
+
                 "int",
                 "int8",
                 "int16",
@@ -58,18 +58,17 @@
                 "uint16",
                 "uint32",
                 "uint64",
-                
+
                 "uintptr",
-            
+
                 "string",
-                
+
                 "rune"
             );
             Type = "xcode.syntax.keyword";
-            AltType = "xcode.syntax.identifier";  // non-keywords are identifiers
+            AltType = "xcode.syntax.identifier";
         };
     },
-    // TODO decide what should go here, if anything
     {
         Identifier = "xcode.lang.go.interestingOperators";
         Syntax = {
@@ -109,7 +108,6 @@
             Type = "xcode.syntax.plain";
         };
     },
-    // The following rule returns tokens to the other rules
     {
         Identifier = "xcode.lang.go.lexer";
         Syntax = {
@@ -149,10 +147,30 @@
             Rules = (
                 "func",
                 "xcode.lang.go.parenexpr",
-                "xcode.lang.go.identifier",
-                "xcode.lang.go.parenexpr",
+                "xcode.lang.go.method.declarator",
             );
             Type = "xcode.syntax.declaration.method";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.method.declarator";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "xcode.lang.go.method.name",
+                "xcode.lang.go.parenexpr",
+            );
+            Type = "xcode.syntax.name.tree";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.method.name";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "xcode.lang.go.identifier"
+            );
+            Type = "xcode.syntax.name.other";
         };
     },
     {
@@ -161,9 +179,29 @@
             Tokenizer = "xcode.lang.go.lexer";
             Rules = (
                 "type",
-                "xcode.lang.go.identifier",
+                "xcode.lang.go.type.declarator",
             );
             Type = "xcode.syntax.typedef";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.type.declarator";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "xcode.lang.go.type.name",
+            );
+            Type = "xcode.syntax.name.tree";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.type.name";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "xcode.lang.go.identifier"
+            );
+            Type = "xcode.syntax.name.type";
         };
     },
     {
@@ -172,10 +210,20 @@
             Tokenizer = "xcode.lang.go.lexer";
             Rules = (
                 "func",
+                "xcode.lang.go.function.declarator",
+            );
+            Type = "xcode.syntax.declaration.function";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.function.declarator";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
                 "xcode.lang.go.function.name",
                 "xcode.lang.go.parenexpr",
             );
-            Type = "xcode.syntax.declaration.function";
+            Type = "xcode.syntax.name.tree";
         };
     },
     {
@@ -185,7 +233,7 @@
             Rules = (
                 "xcode.lang.go.identifier"
             );
-            Type = "xcode.syntax.name.full";
+            Type = "xcode.syntax.name.other";
         };
     },
     {
@@ -200,8 +248,6 @@
         };
     },
 
-    
-    
     // ----------------------------------------------------------------------------
     // Blocks
     {
@@ -270,28 +316,19 @@
             Type = "xcode.syntax.comment";
         };
     },
-    // This rule recognizes special comments markers and adds them
-    // to the list of file markers at the top of the editor window.
-    // This overrides the markers specified in
-    // /Developer/Library/PrivateFrameworks/XcodeEdit.framework/Versions/A/Resources/BaseSupport.xclangspec
-    // and appears to apply them to all languages. Thus, for now
-    // "inherit" the existing markers here for backward-compatibility.
     {
         Identifier = "xcode.lang.comment.mark";
         Syntax = {
             StartChars = "BMTF!?";
             Match = (
-                // Go-specific markers
-                "^\(BUG.*$\)$",            // include "BUG" in the markers list
-                "^\(TODO.*$\)$",        // include "TODO" in the markers list
-                // inherited markers
+                "^\(BUG.*$\)$",
+                "^\(TODO.*$\)$",
                 "^MARK:[ \t]+\(.*\)$",
-                "^\(TODO:[ \t]+.*\)$",        // include "TODO: " in the markers list
-                "^\(FIXME:[ \t]+.*\)$",        // include "FIXME: " in the markers list
-                "^\(!!!:.*\)$",            // include "!!!:" in the markers list
-                "^\(\\?\\?\\?:.*\)$"        // include "???:" in the markers list
+                "^\(TODO:[ \t]+.*\)$",
+                "^\(FIXME:[ \t]+.*\)$",
+                "^\(!!!:.*\)$",
+                "^\(\\?\\?\\?:.*\)$"
             );
-            // This is the order of captures. All of the match strings above need the same order.
             CaptureTypes = (
                 "xcode.syntax.mark"
             );
@@ -299,4 +336,3 @@
         };
     },
 )
-
