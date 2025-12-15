@@ -132,11 +132,69 @@
                 "xcode.lang.string",
                 "xcode.lang.character",
                 "xcode.lang.go.rawstring",
+                "xcode.lang.go.const.block",
+                "xcode.lang.go.var.block",
                 "xcode.lang.go.type.declaration",
                 "xcode.lang.go.method.declaration",
                 "xcode.lang.go.function.declaration",
                 "xcode.lang.go.identifier",
                 "xcode.lang.number",
+            );
+        };
+    },
+
+    // ----------------------------------------------------------------------------
+    // Package and Import
+    {
+        Identifier = "xcode.lang.go.package";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "package",
+                "xcode.lang.go.package.declarator",
+            );
+            Type = "xcode.syntax.declaration.other";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.package.declarator";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "xcode.lang.go.package.name",
+            );
+            Type = "xcode.syntax.name.tree";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.package.name";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "xcode.lang.go.identifier",
+            );
+            Type = "xcode.syntax.name.other";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.import.block";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "import",
+                "xcode.lang.go.import.body?",
+            );
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.import.body";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Start = "(";
+            End = ")";
+            Foldable = YES;
+            IncludeRules = (
+                "xcode.lang.string",
             );
         };
     },
@@ -179,6 +237,29 @@
             Tokenizer = "xcode.lang.go.lexer";
             Rules = (
                 "type",
+                "xcode.lang.go.type.declarator|xcode.lang.go.type.block",
+            );
+            Type = "xcode.syntax.typedef";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.type.block";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Start = "(";
+            End = ")";
+            Foldable = YES;
+            IncludeRules = (
+                "xcode.lang.go.type.item",
+                "xcode.lang.go.block",
+            );
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.type.item";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
                 "xcode.lang.go.type.declarator",
             );
             Type = "xcode.syntax.typedef";
@@ -234,6 +315,49 @@
                 "xcode.lang.go.identifier"
             );
             Type = "xcode.syntax.name.other";
+        };
+    },
+
+    // ----------------------------------------------------------------------------
+    // Const and Var blocks
+    {
+        Identifier = "xcode.lang.go.const.block";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "xcode.lang.go.const.declarator",
+            );
+            Type = "xcode.syntax.declaration.other";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.const.declarator";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "const",
+                "xcode.lang.go.const.body?",
+            );
+            Type = "xcode.syntax.name.tree";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.const.body";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Start = "(";
+            Until = ")";
+            Foldable = YES;
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.var.block";
+        Syntax = {
+            Tokenizer = "xcode.lang.go.lexer";
+            Rules = (
+                "var",
+                "xcode.lang.go.identifier|xcode.lang.go.parenexpr",
+            );
         };
     },
     {
@@ -312,8 +436,18 @@
                 "xcode.lang.url",
                 "xcode.lang.url.mail",
                 "xcode.lang.comment.mark",
+                "xcode.lang.go.comment.directive",
             );
             Type = "xcode.syntax.comment";
+        };
+    },
+    {
+        Identifier = "xcode.lang.go.comment.directive";
+        Syntax = {
+            Match = (
+                "^go:[a-z]+.*$"
+            );
+            Type = "xcode.syntax.preprocessor";
         };
     },
     {
